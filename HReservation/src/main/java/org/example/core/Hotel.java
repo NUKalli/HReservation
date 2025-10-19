@@ -1,8 +1,8 @@
 package org.example.core;
 
 import  java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
 
 public class Hotel {
 
@@ -11,7 +11,7 @@ public class Hotel {
     private String hotelAddress;
     private List<String> amenities = new ArrayList<>();
     private List<Room> rooms = new ArrayList<>();
-    private List<Booking> bookings = new ArrayList<>;
+    private List<Booking> bookings = new ArrayList<>();
 
     public void setHotelName(String hotelName) {
         this.hotelName = hotelName;
@@ -37,11 +37,17 @@ public class Hotel {
     public List<String> getAmenities() {
         return this.amenities;
     }
-    public void removeAmenity(String amenity) {
+    public void removeAmenity(int amenity) {
         this.amenities.remove(amenity);
     }
-    public void addBooking() {
-        Booking booking = new Booking();
+    public void addBooking(Date checkIn, Date checkOut, int roomNumber, int userID) {
+        Booking booking = new Booking(checkIn, checkOut, roomNumber, userID);
         this.bookings.add(booking);
+    }
+    public List<Booking> getBookings() {
+        return this.bookings;
+    }
+    public void removeBooking(int booking) {
+        this.bookings.remove(booking);
     }
 }
