@@ -42,9 +42,24 @@ public class Invoice {
         LineItem lineItem = new LineItem(itemName, itemPrice);
         this.lineItems.add(lineItem);
     }
+    public List<LineItem> getLineItems(){
+        return this.lineItems;
+    }
+
     public void removeLineItem(int lineItemID) {
         this.lineItems.remove(lineItemID);
     }
 
-    public void makePayment(double amount) {}
+    public void makePayment(double amount) {
+        try {
+            if (this.balance - amount < 0){
+                System.out.println("[Error] Over payment. Remaining balance: $" + this.balance);
+            }
+            else {
+                this.balance = this.balance - amount;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

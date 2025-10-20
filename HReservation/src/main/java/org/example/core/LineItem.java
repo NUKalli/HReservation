@@ -9,4 +9,12 @@ public class LineItem {
         this.itemName = itemName;
         this.itemPrice = itemPrice;
     }
+
+    public String getItemName(){
+        return this.itemName;
+    }
+
+    public double getItemPrice(){
+        return this.itemPrice;
+    }
 }

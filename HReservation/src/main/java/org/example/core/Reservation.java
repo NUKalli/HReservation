@@ -13,8 +13,8 @@ public class Reservation {
     private DigitalKey digitalKey;
     private int numberOfGuests;
 
-    public List<Room> getAvailableRooms(Date checkIn, Date checkOut) {}
-    public Booking bookRoom(){}
+    //public List<Room> getAvailableRooms(Date checkIn, Date checkOut) {}
+    //public Booking bookRoom(){}
     public void cancelBooking(Booking booking){}
     public void checkIn(){}
     public void checkOut(){}

@@ -13,9 +13,9 @@ public class User {
     private String password;
     private List<Reservation> reservations = new ArrayList<Reservation>();
 
-    public Reservation makeReservation() {}
+    //public Reservation makeReservation() {}
     public void modifyReservation(Reservation reservation) {}
     public void cancelReservation(Reservation reservation) {}
-    public boolean login(String email, String password) {}
+    //public boolean login(String email, String password) {}
     public void logout() {}
 }
