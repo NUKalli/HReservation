@@ -38,7 +38,7 @@ public class Invoice {
         return this.status;
     }
 
-    public void addLineItems(String itemName, double itemPrice) {
+    public void addLineItem(String itemName, double itemPrice) {
         LineItem lineItem = new LineItem(itemName, itemPrice);
         this.lineItems.add(lineItem);
     }

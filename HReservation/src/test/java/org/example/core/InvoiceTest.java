@@ -10,18 +10,45 @@ import static org.junit.jupiter.api.Assertions.*;
 class InvoiceTest {
 
     @Test
-    void addLineItemsTest(){
+    void addLineItemTest(){
         String itemName = "Room Rate";
         double itemPrice = 147.00;
 
         Invoice invoice = new Invoice();
-        invoice.addLineItems(itemName, itemPrice);
+        invoice.addLineItem(itemName, itemPrice);
 
         LineItem lineItem = invoice.getLineItems().get(0);
 
         Assertions.assertEquals(itemName, lineItem.getItemName());
         Assertions.assertEquals(itemPrice, lineItem.getItemPrice());
         System.out.println("[SUCCESS] addLineItems unit test passed.");
+    }
+
+    @Test
+    void removeLineItemTest(){
+        int lineItemsToAdd = 3;
+        int lineItemToRemove = 1;
+        double itemPrice = 10.00;
+        Invoice invoice = new Invoice();
+        Invoice oldInvoice = new Invoice();
+        for (int i = 0; i < lineItemsToAdd; i++){
+            invoice.addLineItem("Item" + Integer.toString(i), itemPrice * i);
+            oldInvoice.addLineItem("Item" + Integer.toString(i), itemPrice * i);
+        }
+
+        invoice.removeLineItem(lineItemToRemove);
+
+        Assertions.assertNotEquals(oldInvoice.getLineItems().size(), invoice.getLineItems().size());
+        System.out.print("[SUCCESS] removeLineItemsTest unit test passed." +
+                "\n\tOld Line Items: ");
+        for (int i = 0; i < oldInvoice.getLineItems().size(); i++){
+            System.out.print(oldInvoice.getLineItems().get(i).getItemName() + " ");
+        }
+        System.out.print("\n\tNew Line Items: ");
+        for (int i = 0; i < invoice.getLineItems().size(); i++){
+            System.out.print(invoice.getLineItems().get(i).getItemName() + " ");
+        }
+        System.out.println();
     }
 
     @Test
@@ -55,7 +82,9 @@ class InvoiceTest {
         invoice.makePayment(payment);
 
         Assertions.assertEquals(balance, invoice.getBalance());
-        System.out.println("[Success] makeOverPaymentTest unit test passed.\n\tExpected Balance:\t$" + balance + "\n\tBalance:\t\t\t$" + invoice.getBalance());
+        System.out.println("[Success] makeOverPaymentTest unit test passed." +
+                "\n\tExpected Balance:\t$" + balance + "" +
+                "\n\tBalance:\t\t\t$" + invoice.getBalance());
     }
 
     @Test
@@ -69,7 +98,9 @@ class InvoiceTest {
         invoice.makePayment(payment);
 
         Assertions.assertEquals(balance - payment, invoice.getBalance());
-        System.out.println("[Success] makeUnderPaymentTest unit test passed.\n\tExpected Balance:\t$" + (balance - payment) + "\n\tBalance:\t\t\t$" + invoice.getBalance());
+        System.out.println("[Success] makeUnderPaymentTest unit test passed." +
+                "\n\tExpected Balance:\t$" + (balance - payment) + "" +
+                "\n\tBalance:\t\t\t$" + invoice.getBalance());
     }
 
     @Test
@@ -83,7 +114,9 @@ class InvoiceTest {
         invoice.makePayment(payment);
 
         Assertions.assertEquals(0,invoice.getBalance());
-        System.out.println("[Success] makeFullPaymentTest unit test passed.\n\tExpected Balance:\t$0.00\n\tBalance:\t\t\t$" + invoice.getBalance());
+        System.out.println("[Success] makeFullPaymentTest unit test passed." +
+                "\n\tExpected Balance:\t$0.00" +
+                "\n\tBalance:\t\t\t$" + invoice.getBalance());
     }
 
 }
