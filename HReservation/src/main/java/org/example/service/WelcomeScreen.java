@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class WelcomeScreen {
 
     private boolean authenticated = false;
+    private Login login = new Login();
     private String[] art = {
             "    __ __                               __             ",
             "   / // / _ \\___ ___ ___ _____  _____ _/ /_(_)__  ___",
@@ -68,7 +69,7 @@ public class WelcomeScreen {
             System.out.println(" |--(Q)uit       ");
 
             switch (userInput.nextLine()) {
-                case "L": Login login = new Login();authenticated = login.start();break;
+                case "L": authenticated = login.start();break;
                 case "N": break;
                 case "Q": exit = true;break;
                 default: System.out.println("[ERROR] Invalid option.");break;
@@ -78,6 +79,10 @@ public class WelcomeScreen {
 
     public boolean isAuthenticated() {
         return authenticated;
+    }
+
+    public Login getLogin(){
+        return login;
     }
 }
 

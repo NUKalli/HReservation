@@ -21,12 +21,14 @@ public class Login {
      * @return true if the user's credentials match a line in
      * the database file.
      */
+    private String email;
+
     private boolean authenticate() {
         Scanner input = new Scanner(System.in);
 
         // Prompt for user credentials
         System.out.println("Enter email: ");
-        String email = input.nextLine();
+        email = input.nextLine();
 
         System.out.println("Enter password: ");
         String password = input.nextLine();
@@ -76,6 +78,10 @@ public class Login {
             isValid = authenticate();
         }
         return isValid;
+    }
+
+    public String getEmail(){
+        return email;
     }
 }
 

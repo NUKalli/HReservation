@@ -10,7 +10,7 @@ public class Main {
         welcome.print();
         if (welcome.isAuthenticated()) {
             Application application = new Application();
-            application.launch();
+            application.launch(welcome.getLogin().getEmail());
         }
     }
 }
