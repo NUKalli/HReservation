@@ -1,70 +1,21 @@
 package org.example.service;
 
-import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 /**
  * Provides a simple, console-based login system
- * that validates user credentials (email and password) against a database stored
- * in a local text file named users_db located in src/main/resources/
- * Each line of the file should be formatted:
- *     email,password
- * Example:
- *     admin@gmail.com,1234
- *     user@gmail.com,1234
- */
+ * that validates user credentials (email and password) against a database
+*/
 public class Login {
 
     /**
-     * Authenticates a user with email and password by
-     * checking users_db file
+     * Authenticates a user with email and password
      * @return true if the user's credentials match a line in
      * the database file.
      */
     private String email;
-
-    private boolean authenticate() {
-        Scanner input = new Scanner(System.in);
-
-        // Prompt for user credentials
-        System.out.println("Enter email: ");
-        email = input.nextLine();
-
-        System.out.println("Enter password: ");
-        String password = input.nextLine();
-
-        // Combine input into the format used in users_db
-        String userInput = email + "," + password;
-
-        try {
-            // Load users_db file from resources
-            InputStream database = getClass().getClassLoader().getResourceAsStream("users_db");
-
-            // If file not found, return false
-            if (database == null) {
-                System.out.println("[ERROR] - Failed to open users_db file.");
-                return false;
-            }
-
-            // Read and compare each line with user input
-            Scanner openDB = new Scanner(database);
-            while (openDB.hasNextLine()) {
-                String line = openDB.nextLine();
-                if (userInput.equals(line)) {
-                    return true; // Successful login
-                }
-            }
-
-            // No match found
-            System.out.println("Invalid email or password...");
-        } catch (Exception e) {
-            // Catch unexpected errors
-            System.out.println("[ERROR] - Unknown error during login.");
-        }
-
-        // Return false if login failed
-        return false;
-    }
+    private int sessionID = -1;
 
     /**
      * Starts the login process and keeps prompting the user
@@ -80,8 +31,41 @@ public class Login {
         return isValid;
     }
 
+    private boolean authenticate() {
+        Scanner input = new Scanner(System.in);
+
+        // Prompt for user credentials
+        System.out.println("Enter email: ");
+        email = input.nextLine();
+
+        System.out.println("Enter password: ");
+        String password = input.nextLine();
+
+        //Checks the database for account matching user input. Returns a session ID if found.
+        SQLiteDBManager DB = new SQLiteDBManager();
+        DB.initialize();
+
+        try {
+            sessionID = DB.verifyUser(DB.connect(),email, password);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        if (sessionID == -1) {
+            System.out.println("Invalid email or password...");
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
     public String getEmail(){
         return email;
+    }
+
+    public int getSessionID(){
+        return sessionID;
     }
 }
 
