@@ -73,14 +73,14 @@ public class WelcomeScreen {
 
         while (!exit && !authenticated) {
             System.out.println("Menu:          ");
-            System.out.println(" |__(L)ogin      ");
-            System.out.println(" |__(N)ew User   ");
-            System.out.println(" |--(Q)uit       ");
+            System.out.println(" |__(l)ogin      ");
+            System.out.println(" |__(n)ew User   ");
+            System.out.println(" |--(q)uit       ");
 
             switch (userInput.nextLine()) {
-                case "L": authenticated = login.start();break;
-                case "N": newUserMenu();break;
-                case "Q": exit = true;break;
+                case "l": authenticated = login.start();break;
+                case "n": newUserMenu();break;
+                case "q": exit = true;break;
                 default: System.out.println("[ERROR] Invalid option.");break;
             }
         }

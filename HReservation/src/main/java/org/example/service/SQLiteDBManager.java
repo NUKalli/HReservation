@@ -48,17 +48,31 @@ public class SQLiteDBManager {
         try {
             this.conn = DriverManager.getConnection(jdbcUrl);
             try {
-                String createTableSQL = "CREATE TABLE IF NOT EXISTS users " +
+                String createUserTableSQL = "CREATE TABLE IF NOT EXISTS users " +
                         "( " +
                         "userID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        "firstName varchar(255), " +
-                        "lastName varchar(255), " +
-                        "phoneNumber varchar(255), " +
-                        "email varchar(255), " +
-                        "password varchar(255) " +
+                        "firstName VARCHAR(255), " +
+                        "lastName VARCHAR(255), " +
+                        "phoneNumber VARCHAR(255), " +
+                        "email VARCHAR(255), " +
+                        "password VARCHAR(255) " +
                         "); ";
+//                String createReservationTableSQL = "CREATE TABLE IF NOT EXISTS reservations " +
+//                        "( " +
+//                        "reservationID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+//                        "userID INTEGER NOT NULL, " +
+//                        "hotelName VARCHAR(255), " +
+//                        "roomNumber VARCHAR(255), " +
+//                        "bookingDate VARCHAR(255), " +
+//                        "invoiceAmount REAL, " +
+//                        "digitalKeyCode VARCHAR(255), " +
+//                        "numberOfGuests INTEGER, " +
+//                        "FOREIGN KEY (userID) REFERENCES users(userID) " +
+//                        "); ";
+                String createRoomTableSQL = "";
                 Statement statement = conn.createStatement();
-                statement.execute(createTableSQL);
+                statement.execute(createUserTableSQL);
+                //statement.execute(createReservationTableSQL);
 
                 String checkSQL = "SELECT COUNT(*) FROM users WHERE email = ?";
                 try (PreparedStatement checkStmt = conn.prepareStatement(checkSQL)) {
@@ -108,7 +122,7 @@ public class SQLiteDBManager {
                 if (rs.next()) {
                     return rs.getInt("userID"); // return the matching user's ID
                 } else {
-                    return null; // no match found
+                    return -1; // no match found
                 }
             }
         }
