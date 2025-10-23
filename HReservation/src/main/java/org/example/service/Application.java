@@ -4,23 +4,70 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Application {
-//    private void addReservation() {
-//        SQLiteDBManager DB =new SQLiteDBManager();
-//    }
-    private int sessionID;
 
-    public void launch(String email, int sessionID) {
-        System.out.println("Successfully launched HReservation as " + email);
-        this.sessionID = sessionID;
-        menu();
+    private int sessionID;
+    private boolean authenticated = false;
+    private Login login = new Login();
+
+    private boolean isAuthenticated() {
+        return authenticated;
+    }
+
+    public void launch() {
+        menuLogin();
+        if (isAuthenticated()) {
+            this.sessionID = login.getSessionID();
+            System.out.println("Successfully launched HReservation as " + login.getEmail());
+            menu();
+        }
+    }
+
+    private void menuLogin() {
+        Scanner userInput = new Scanner(System.in);
+        boolean exit = false;
+
+        while (!exit && !authenticated) {
+            System.out.println("Menu:          ");
+            System.out.println(" |__(l)ogin      ");
+            System.out.println(" |__(n)ew User   ");
+            System.out.println(" |--(q)uit       ");
+
+            switch (userInput.nextLine()) {
+                case "l": authenticated = login.start();break;
+                case "n": newUserMenu();break;
+                case "q": exit = true;break;
+                default: System.out.println("[ERROR] Invalid option.");break;
+            }
+        }
+    }
+
+    private void newUserMenu (){
+        Scanner userInput = new Scanner(System.in);
+        System.out.print("\nFirst Name: ");
+        String firstName = userInput.nextLine();
+        System.out.print("\nLast Name: ");
+        String lastName =userInput.nextLine();
+        System.out.print("\nPhone Number: ");
+        String phoneNumber =userInput.nextLine();
+        System.out.print("\nEmail: ");
+        String email = userInput.nextLine();
+        System.out.print("\nPassword: ");
+        String password =userInput.nextLine();
+
+        try {
+            SQLiteDBManager DB = new SQLiteDBManager();
+            DB.insertUser(firstName,lastName,phoneNumber,email,password);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void menu() {
         Scanner userInput = new Scanner(System.in);
-        boolean exit = false;
+        boolean quit = false;
         boolean devMode = false;
 
-        while (!exit) {
+        while (!quit) {
             System.out.println("Menu:                     ");
             System.out.println(" |__(sea)rch              ");
             System.out.println(" |__(dev)eloper options   ");
@@ -28,25 +75,36 @@ public class Application {
 
             switch (userInput.nextLine()) {
                 case "sea": break;
-                case "dev": break;
-                case "q": exit = true;break;
+                case "dev": devMenu(userInput);break;
+                case "q": quit = true;break;
                 default: System.out.println("[ERROR] Invalid option.");break;
             }
         }
+    }
 
-        while (!devMode) {
+    private void devMenu(Scanner userInput) {
+        boolean devMode = true;
+        while (devMode) {
             System.out.println("Developer Menu:           ");
             System.out.println(" |__(print) table         ");
             System.out.println(" |__(add) to table        ");
-            System.out.println(" |--(q)uit                ");
+            System.out.println(" |--(e)xit                ");
 
             switch (userInput.nextLine()) {
                 case "print": break;
                 case "add": break;
-                case "q": exit = true;break;
+                case "e": devMode = false;break;
                 default: System.out.println("[ERROR] Invalid option.");break;
             }
         }
+    }
+
+    private void searchMenu(Scanner userInput) {
+        System.out.println("Check-in (dd-MM-yyyy): ");
+        String checkIn = userInput.nextLine();
+        System.out.println("Check-out: dd-MM-yyyy");
+        String checkOut = userInput.nextLine();
+
 
     }
 }

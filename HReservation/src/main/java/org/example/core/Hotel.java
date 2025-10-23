@@ -1,5 +1,6 @@
 package org.example.core;
 
+import java.time.LocalDate;
 import  java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,7 +41,7 @@ public class Hotel {
     public void removeAmenity(int amenity) {
         this.amenities.remove(amenity);
     }
-    public void addBooking(Date checkIn, Date checkOut, int roomNumber, int userID) {
+    public void addBooking(LocalDate checkIn, LocalDate checkOut, int roomNumber, int userID) {
         Booking booking = new Booking(checkIn, checkOut, roomNumber, userID);
         this.bookings.add(booking);
     }

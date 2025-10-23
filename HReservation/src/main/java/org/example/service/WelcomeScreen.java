@@ -1,8 +1,5 @@
 package org.example.service;
 
-import java.sql.SQLException;
-import java.util.Scanner;
-
 public class WelcomeScreen {
 
     private boolean authenticated = false;
@@ -47,14 +44,10 @@ public class WelcomeScreen {
 
     public void start(){
         print();
-        if (isAuthenticated()) {
-            Application application = new Application();
-            application.launch(login.getEmail(),login.getSessionID());
-        }
     }
 
     // Print the ASCII art inside a nice rounded frame and starts the login menu
-    private void print() {
+    public void print() {
         int artWidth = getMaxWidth(this.art);
         int frameWidth = artWidth + 12; // wider frame
         int leftPad = (frameWidth - 2 - artWidth) / 2;
@@ -64,55 +57,6 @@ public class WelcomeScreen {
             printLine(line, frameWidth, leftPad);
         }
         printBottom(frameWidth);
-        menu();
-    }
-
-    private void menu() {
-        Scanner userInput = new Scanner(System.in);
-        boolean exit = false;
-
-        while (!exit && !authenticated) {
-            System.out.println("Menu:          ");
-            System.out.println(" |__(l)ogin      ");
-            System.out.println(" |__(n)ew User   ");
-            System.out.println(" |--(q)uit       ");
-
-            switch (userInput.nextLine()) {
-                case "l": authenticated = login.start();break;
-                case "n": newUserMenu();break;
-                case "q": exit = true;break;
-                default: System.out.println("[ERROR] Invalid option.");break;
-            }
-        }
-    }
-
-    private void newUserMenu (){
-        Scanner userInput = new Scanner(System.in);
-        System.out.print("\nFirst Name: ");
-        String firstName = userInput.nextLine();
-        System.out.print("\nLast Name: ");
-        String lastName =userInput.nextLine();
-        System.out.print("\nPhone Number: ");
-        String phoneNumber =userInput.nextLine();
-        System.out.print("\nEmail: ");
-        String email = userInput.nextLine();
-        System.out.print("\nPassword: ");
-        String password =userInput.nextLine();
-
-        try {
-            SQLiteDBManager DB = new SQLiteDBManager();
-            DB.insertUser(DB.connect(),firstName,lastName,phoneNumber,email,password);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private boolean isAuthenticated() {
-        return authenticated;
-    }
-
-    private Login getLogin(){
-        return login;
     }
 }
 

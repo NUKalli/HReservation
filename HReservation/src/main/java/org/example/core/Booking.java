@@ -1,33 +1,45 @@
 package org.example.core;
 
+import java.text.DateFormat;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class Booking {
 
-    private Date checkIn;
-    private Date checkOut;
+    private LocalDate checkIn;
+    private LocalDate checkOut;
     private int roomNumber;
     private int userID;
 
-    public Booking(Date checkIn, Date checkOut, int roomNumber, int userID) {
+    DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+    public Booking(LocalDate checkIn, LocalDate checkOut, int roomNumber, int userID) {
         this.checkIn = checkIn;
         this.checkOut = checkOut;
         this.roomNumber = roomNumber;
         this.userID = userID;
     }
 
-    public void setCheckIn(Date checkIn) {
+    public void setCheckIn(LocalDate checkIn) {
         this.checkIn = checkIn;
     }
-    public Date getCheckIn() {
+    public LocalDate getCheckIn() {
         return this.checkIn;
     }
+    public void setCheckIn(String checkIn) {
+        this.checkIn = LocalDate.parse(checkIn, format);
+    }
 
-    public void setCheckOut(Date checkOut) {
+    public void setCheckOut(LocalDate checkOut) {
         this.checkOut = checkOut;
     }
-    public Date getCheckOut() {
+    public LocalDate getCheckOut() {
         return this.checkOut;
+    }
+    public void setCheckOut(String checkOut) {
+        this.checkOut = LocalDate.parse(checkOut, format);
     }
 
     public void setRoomNumber(int roomNumber) {
@@ -43,5 +55,6 @@ public class Booking {
     public int getUserID() {
         return this.userID;
     }
+
 
 }
