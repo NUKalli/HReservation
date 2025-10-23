@@ -47,7 +47,7 @@ public class Login {
 
         try {
             sessionID = DB.verifyUser(email, password);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
