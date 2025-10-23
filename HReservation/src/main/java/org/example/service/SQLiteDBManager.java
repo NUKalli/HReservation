@@ -157,8 +157,8 @@ public class SQLiteDBManager {
 
     public void insertUser(String firstName, String lastName, String phoneNumber, String email, String password) throws SQLException {
         //Uses ?'s to use the PreparedStatement Object Class
-        this.conn = DriverManager.getConnection(jdbcUrl);
         String insertSQL = "INSERT INTO users(firstName, lastName, phoneNumber, email, password) VALUES(?,?,?,?,?)";
+        this.conn = DriverManager.getConnection(jdbcUrl);
 
         PreparedStatement prepStatement = conn.prepareStatement(insertSQL);
         prepStatement.setString(1, firstName);
@@ -169,22 +169,26 @@ public class SQLiteDBManager {
         prepStatement.executeUpdate();
     }
 
-    public Integer verifyUser(String email, String password) throws SQLException {
-        this.conn = DriverManager.getConnection(jdbcUrl);
+    public Integer verifyUser(String email, String password) {
         String sql = "SELECT userID FROM users WHERE email = ? AND password = ?";
+        try {
+            this.conn = DriverManager.getConnection(jdbcUrl);
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, email);
             pstmt.setString(2, password);
 
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("userID"); // return the matching user's ID
-                } else {
-                    return -1; // no match found
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt("userID"); // return the matching user's ID
+                    } else {
+                        return -1; // no match found
+                    }
                 }
-            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
+        return -1;
     }
 
     public void insertRoom(int reservationID, int floorNumber, double rate, String roomStatus){
@@ -204,7 +208,16 @@ public class SQLiteDBManager {
         }
     }
 
-    public void availableRooms(){
+    public void availableRooms(String checkIn, String checkOut){
+        String sql = "SELECT roomID FROM rooms";
+        try {
+            this.conn = DriverManager.getConnection(jdbcUrl);
+            Statement statement = conn.createStatement();
 
+
+            System.out.println("YES");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

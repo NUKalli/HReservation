@@ -1,13 +1,17 @@
 package org.example.service;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class Application {
 
     private int sessionID;
     private boolean authenticated = false;
+    private DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private Login login = new Login();
+    SQLiteDBManager DB = new SQLiteDBManager();
 
     private boolean isAuthenticated() {
         return authenticated;
@@ -55,7 +59,6 @@ public class Application {
         String password =userInput.nextLine();
 
         try {
-            SQLiteDBManager DB = new SQLiteDBManager();
             DB.insertUser(firstName,lastName,phoneNumber,email,password);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -74,7 +77,7 @@ public class Application {
             System.out.println(" |--(q)uit                ");
 
             switch (userInput.nextLine()) {
-                case "sea": break;
+                case "sea": searchMenu();break;
                 case "dev": devMenu(userInput);break;
                 case "q": quit = true;break;
                 default: System.out.println("[ERROR] Invalid option.");break;
@@ -99,12 +102,41 @@ public class Application {
         }
     }
 
-    private void searchMenu(Scanner userInput) {
-        System.out.println("Check-in (dd-MM-yyyy): ");
-        String checkIn = userInput.nextLine();
-        System.out.println("Check-out: dd-MM-yyyy");
-        String checkOut = userInput.nextLine();
+    private void searchMenu() {
+        boolean searching = true;
+        boolean validSearch = false;
 
+        while (searching) {
+            String checkIn = null;
+            String checkOut = null;
 
+            if (!validSearch) {
+                Scanner userInput = new Scanner(System.in);
+                System.out.println("Check-in: dd-MM-yyyy ");
+                checkIn = userInput.nextLine();
+                System.out.println("Check-out: dd-MM-yyyy");
+                checkOut = userInput.nextLine();
+                try {
+                    LocalDate in = LocalDate.parse(checkIn, format);
+                    LocalDate out = LocalDate.parse(checkOut, format);
+                    if (!in.isBefore(out)) {
+                        System.out.println("Check-out must be after check-in. Try again.\n");
+                        continue;
+                    }
+                    validSearch = true;
+                } catch (RuntimeException e) {
+                    System.out.println(e.getMessage());
+                }
+
+            }
+
+            else {
+                try {
+                    DB.availableRooms(checkIn, checkOut);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
     }
 }
