@@ -9,6 +9,9 @@ public class Application {
 
     private int sessionID;
     private boolean authenticated = false;
+    private String lastCheckIn = null;
+    private String lastCheckOut = null;
+    private int lastNumberOfGuest = -1;
     private DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private Login login = new Login();
     SQLiteDBManager DB = new SQLiteDBManager();
@@ -21,7 +24,7 @@ public class Application {
         menuLogin();
         if (isAuthenticated()) {
             this.sessionID = login.getSessionID();
-            System.out.println("Successfully launched HReservation as " + login.getEmail());
+            System.out.println("Successfully launched HReservation as " + login.getEmail() + "\nSessionID: " + sessionID);
             menu();
         }
     }
@@ -60,8 +63,8 @@ public class Application {
 
         try {
             DB.insertUser(firstName,lastName,phoneNumber,email,password);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -73,11 +76,13 @@ public class Application {
         while (!quit) {
             System.out.println("Menu:                     ");
             System.out.println(" |__(sea)rch              ");
+            System.out.println(" |__(boo)k a room         ");
             System.out.println(" |__(dev)eloper options   ");
             System.out.println(" |--(q)uit                ");
 
             switch (userInput.nextLine()) {
                 case "sea": searchMenu();break;
+                case "boo": bookingMenu();break;
                 case "dev": devMenu(userInput);break;
                 case "q": quit = true;break;
                 default: System.out.println("[ERROR] Invalid option.");break;
@@ -88,13 +93,21 @@ public class Application {
     private void devMenu(Scanner userInput) {
         boolean devMode = true;
         while (devMode) {
-            System.out.println("Developer Menu:           ");
-            System.out.println(" |__(print) table         ");
-            System.out.println(" |__(add) to table        ");
-            System.out.println(" |--(e)xit                ");
+            System.out.println("Developer Menu:                 ");
+            System.out.println(" |__(print users) table         ");
+            System.out.println(" |__(print hotels) table        ");
+            System.out.println(" |__(print rooms) table         ");
+            System.out.println(" |__(print res)ervations        ");
+            System.out.println(" |--(print boo)kings            ");
+            System.out.println(" |__(add) to table              ");
+            System.out.println(" |--(e)xit                      ");
 
             switch (userInput.nextLine()) {
-                case "print": break;
+                case "print users": DB.printUsers();break;
+                case "print rooms": DB.printRooms();break;
+                case "print hotels": DB.printHotels();break;
+                case "print res": DB.printReservations();break;
+                case "print boo": DB.printBookings();break;
                 case "add": break;
                 case "e": devMode = false;break;
                 default: System.out.println("[ERROR] Invalid option.");break;
@@ -105,20 +118,30 @@ public class Application {
     private void searchMenu() {
         boolean searching = true;
         boolean validSearch = false;
+        lastNumberOfGuest = -1;
 
         while (searching) {
-            String checkIn = null;
-            String checkOut = null;
+            String numberOfGuests = null;
 
             if (!validSearch) {
+                lastCheckIn = null;
+                lastCheckOut = null;
                 Scanner userInput = new Scanner(System.in);
+                System.out.println("How many guests? ");
+                numberOfGuests = userInput.nextLine();
                 System.out.println("Check-in: dd-MM-yyyy ");
-                checkIn = userInput.nextLine();
+                lastCheckIn = userInput.nextLine();
                 System.out.println("Check-out: dd-MM-yyyy");
-                checkOut = userInput.nextLine();
+                lastCheckOut = userInput.nextLine();
                 try {
-                    LocalDate in = LocalDate.parse(checkIn, format);
-                    LocalDate out = LocalDate.parse(checkOut, format);
+                    lastNumberOfGuest = Integer.parseInt(numberOfGuests);
+                } catch (Exception e) {
+                    System.out.println("Please enter a valid number of guests.");
+                    continue;
+                }
+                try {
+                    LocalDate in = LocalDate.parse(lastCheckIn, format);
+                    LocalDate out = LocalDate.parse(lastCheckOut, format);
                     if (!in.isBefore(out)) {
                         System.out.println("Check-out must be after check-in. Try again.\n");
                         continue;
@@ -132,11 +155,47 @@ public class Application {
 
             else {
                 try {
-                    DB.availableRooms(checkIn, checkOut);
+                    DB.availableRooms(lastCheckIn, lastCheckOut);
+                    searching = false;
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
             }
         }
     }
+
+    private void bookingMenu() {
+        boolean dateConfirmed = false;
+        Scanner userInput = new Scanner(System.in);
+        while (!dateConfirmed) {
+            if (lastCheckIn == null || lastCheckOut == null || lastNumberOfGuest == -1){
+                searchMenu();
+                continue;
+            }
+            System.out.println("Book room number for " + lastNumberOfGuest + " people from " + lastCheckIn + " to " + lastCheckOut + ":\nY/N?");
+            switch (userInput.nextLine()) {
+                case "Y":
+                    dateConfirmed = true;
+                    break;
+                case "N":
+                    searchMenu();
+                    break;
+                default:
+                    System.out.println("Please enter Y/N:");
+                    break;
+            }
+        }
+        try {
+            System.out.println("Choose your room number: ");
+            String intCheck = userInput.nextLine();
+            int roomNumber = Integer.parseInt(intCheck);
+            DB.insertBooking(DB.insertReservation(sessionID, 1, lastNumberOfGuest), roomNumber,lastCheckIn,lastCheckOut);
+            DB.bookRoom(roomNumber, sessionID);
+            ;
+        } catch (NumberFormatException e) {
+            System.out.println("[ERROR] Invalid Room Number " + e.getMessage());
+        }
+    }
+
+
 }
